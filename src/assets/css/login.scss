@@ -104,3 +104,19 @@
 .login__link:hover {
   color: $color-login-links-hover;
 }
+
+@media (max-width: 350px) {
+  .login__wrapper {
+    width: 80%;
+  }
+  .login__logo {
+    font-size: 15vw;
+  }
+  .login__links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
+  }
+}

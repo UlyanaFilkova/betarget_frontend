@@ -107,4 +107,20 @@
 
 .login__link:hover {
   color: #9473c9;
+}
+
+@media (max-width: 350px) {
+  .login__wrapper {
+    width: 80%;
+  }
+  .login__logo {
+    font-size: 15vw;
+  }
+  .login__links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
+  }
 }/*# sourceMappingURL=login.css.map */

@@ -50,11 +50,11 @@ const handleSubmit = async () => {
           required
         />
         <button class="login__button" type="submit">Вход</button>
-        <div class="login__links">
-          <RouterLink to="" class="login__link">Забыли пароль?</RouterLink>
-          <RouterLink to="" class="login__link">Создать аккаунт</RouterLink>
-        </div>
       </form>
+      <div class="login__links">
+        <RouterLink to="" class="login__link">Забыли пароль?</RouterLink>
+        <RouterLink to="" class="login__link">Создать аккаунт</RouterLink>
+      </div>
     </div>
   </section>
 </template>
