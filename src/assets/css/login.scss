@@ -1,0 +1,49 @@
+@import "_variables";
+
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.login__logo {
+  font-family: $logo-font;
+  color: $color-main-accent;
+  font-size: 50px;
+  letter-spacing: 0.04em;
+  margin-bottom: 15px;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login__input {
+  border: 2px $color-input-border solid;
+  border-radius: 7px;
+  padding: 5px 8px;
+  margin-bottom: 10px;
+  width: 300px;
+}
+
+.login__input:hover {
+  border-color: $color-input-border;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.login__input:focus {
+  border-color: $color-input-border-focus;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.18);
+  outline: none;
+}
+
+.login__input::placeholder {
+  font-family: $logo-font;
+  letter-spacing: 0.01em;
+  color: $color-input-placeholder;
+}
