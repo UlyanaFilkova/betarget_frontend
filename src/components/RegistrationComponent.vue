@@ -7,15 +7,21 @@ import axios from "axios";
 
 const form = reactive({
   email: "",
+  username: "",
   password: "",
+  repeatPassword: "",
 });
 
 const loginEmail = ref(null);
+const loginUsername = ref(null);
 const loginPassword = ref(null);
+const loginRepeatPassword = ref(null);
 
 const errors = reactive({
   email: "",
+  username: "",
   password: "",
+  repeatPassword: "",
   emptyFields: "",
 });
 
@@ -56,16 +62,42 @@ onMounted(() => {
       errors.password = "";
     }
   });
+
+  loginRepeatPassword.value.addEventListener("focusout", (event) => {
+    if (loginRepeatPassword.value.value !== loginPassword.value.value) {
+      errors.repeatPassword = "Пароли не совпадают";
+      loginRepeatPassword.value.addEventListener("input", (event) => {
+        if (!validatePassword(loginPassword.value.value)) {
+          errors.repeatPassword = "Пароли не совпадают";
+        } else {
+          errors.repeatPassword = "";
+        }
+      });
+    } else {
+      errors.repeatPassword = "";
+    }
+  });
 });
 
 const handleSubmit = async () => {
   // если поля пусты или невалидны
-  if (loginPassword.value.value === "" || loginEmail.value.value === "") {
+  if (
+    loginRepeatPassword.value.value === "" ||
+    loginUsername.value.value === "" ||
+    loginPassword.value.value === "" ||
+    loginEmail.value.value === ""
+  ) {
     errors.emptyFields = "Заполните, пожалуйста, все поля";
   } else {
     errors.emptyFields = "";
   }
-  if (errors.email !== "" || errors.password !== "" || errors.emptyFields) {
+  if (
+    errors.repeatPassword !== "" ||
+    errors.username !== "" ||
+    errors.email !== "" ||
+    errors.password !== "" ||
+    errors.emptyFields
+  ) {
     return;
   }
   const userData = {
@@ -75,8 +107,8 @@ const handleSubmit = async () => {
 
   try {
     console.log(userData);
-    const response = await axios.post("/api/jobs/", userData);
-    router.push(`/jobs/${response.data.id}`);
+    // const response = await axios.post("/api/jobs/", userData);
+    // router.push(`/jobs/${response.data.id}`);
   } catch (error) {
     console.error("Error login", error);
   }
@@ -92,6 +124,22 @@ const handleSubmit = async () => {
           :style="{ visibility: errors.emptyFields ? 'visible' : 'hidden' }"
           class="login__error"
           >{{ errors.emptyFields }}</span
+        >
+        <input
+          class="login__input"
+          type="username"
+          id="login__username"
+          name="login__username"
+          v-model="form.username"
+          placeholder="Имя пользователя"
+          autocomplete="username"
+          ref="loginUsername"
+          required
+        />
+        <span
+          :style="{ visibility: errors.username ? 'visible' : 'hidden' }"
+          class="login__error"
+          >{{ errors.username }}</span
         >
         <input
           class="login__input"
@@ -116,7 +164,7 @@ const handleSubmit = async () => {
           name="login__password"
           v-model="form.password"
           placeholder="Пароль"
-          autocomplete="current-password"
+          autocomplete="new-password"
           ref="loginPassword"
           required
         />
@@ -125,14 +173,35 @@ const handleSubmit = async () => {
           class="login__error"
           >{{ errors.password }}</span
         >
-        <button class="login__button" type="submit">Вход</button>
+        <input
+          class="login__input"
+          type="password"
+          id="login__repeat_password"
+          name="login__repeat_password"
+          v-model="form.repeatPassword"
+          placeholder="Повторите пароль"
+          autocomplete="new-password"
+          ref="loginRepeatPassword"
+          required
+        />
+        <span
+          :style="{ visibility: errors.repeatPassword ? 'visible' : 'hidden' }"
+          class="login__error"
+          >{{ errors.repeatPassword }}</span
+        >
+        <button class="login__button" type="submit">Регистрация</button>
       </form>
       <div class="login__links">
-        <RouterLink to="" class="login__link">Забыли пароль? </RouterLink>
-        <RouterLink to="/registration" class="login__link"
-          >Создать аккаунт</RouterLink
+        <RouterLink to="/login" class="login__link"
+          >Уже есть аккаунт? Войти</RouterLink
         >
       </div>
     </div>
   </section>
 </template>
+
+<style scoped>
+.login__links {
+  justify-content: center;
+}
+</style>

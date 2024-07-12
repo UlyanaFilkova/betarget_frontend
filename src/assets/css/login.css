@@ -33,7 +33,7 @@
 .login__input {
   border: 2px #dedee8 solid;
   border-radius: 7px;
-  padding: 5px 8px;
+  padding: 8px 8px;
   margin-bottom: 5px;
   width: 100%;
   color: #535358;
@@ -67,7 +67,7 @@
   font-size: 13px;
   visibility: hidden;
   margin-bottom: 10px;
-  align-self: flex-end;
+  align-self: flex-start;
   color: #be1343;
 }
 
