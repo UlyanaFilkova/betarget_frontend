@@ -101,14 +101,14 @@ const handleSubmit = async () => {
     return;
   }
   const userData = {
+    username: form.username,
     email: form.email,
     password: form.password,
   };
 
   try {
     console.log(userData);
-    // const response = await axios.post("/api/jobs/", userData);
-    // router.push(`/jobs/${response.data.id}`);
+    const response = await axios.post("/register", userData);
   } catch (error) {
     console.error("Error login", error);
   }
