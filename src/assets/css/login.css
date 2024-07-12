@@ -34,13 +34,9 @@
   border: 2px #dedee8 solid;
   border-radius: 7px;
   padding: 5px 8px;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   width: 100%;
   color: #535358;
-}
-
-.login__input:last-of-type {
-  margin-bottom: 20px;
 }
 
 .login__input:hover {
@@ -64,6 +60,15 @@
   font-family: "Open Sans", sans-serif;
   letter-spacing: 0.01em;
   color: #b3b3be;
+}
+
+.login__error {
+  min-height: 15px;
+  font-size: 13px;
+  visibility: hidden;
+  margin-bottom: 10px;
+  align-self: flex-end;
+  color: #be1343;
 }
 
 .login__button {
