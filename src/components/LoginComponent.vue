@@ -39,7 +39,6 @@ onMounted(() => {
   });
 
   loginPassword.value.addEventListener("focusout", (event) => {
-    console.log(loginPassword.value.value);
     if (!validatePassword(loginPassword.value.value)) {
       errors.password =
         "Пароль должен быть не менее 8 символов и содержать большие буквы и цифры";
@@ -58,6 +57,15 @@ onMounted(() => {
 });
 
 const handleSubmit = async () => {
+  // если поля пусты или невалидны
+  if (
+    errors.email !== "" ||
+    errors.password !== "" ||
+    loginPassword.value.value === "" ||
+    loginEmail === ""
+  ) {
+    return; 
+  }
   const userData = {
     email: form.email,
     password: form.password,
