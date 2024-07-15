@@ -19,84 +19,72 @@ const errors = reactive({
   emptyFields: "",
 });
 
-function validatePassword(password) {
+const validatePassword = (password) => {
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
   return passwordRegex.test(password);
-}
+};
+
+const checkEmail = () => {
+  if (loginEmail.value.validity.typeMismatch) {
+    errors.email = "Введите корректный email";
+    return false;
+  } else {
+    errors.email = "";
+    return true;
+  }
+};
+
+const checkPassword = () => {
+  if (!validatePassword(loginPassword.value.value)) {
+    errors.password =
+      "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры";
+    return false;
+  } else {
+    errors.password = "";
+    return true;
+  }
+};
 
 onMounted(() => {
   loginEmail.value.addEventListener("focusout", (event) => {
-    if (loginEmail.value.validity.typeMismatch) {
-      errors.email = "Введите корректный email";
-      loginEmail.value.addEventListener("input", (event) => {
-        if (loginEmail.value.validity.typeMismatch) {
-          errors.email = "Введите корректный email";
-        } else {
-          errors.email = "";
-        }
-      });
+    if (checkEmail() === false) {
+      loginEmail.value.addEventListener("input", checkEmail);
     } else {
       errors.email = "";
     }
   });
 
   loginPassword.value.addEventListener("focusout", (event) => {
-    if (!validatePassword(loginPassword.value.value)) {
-      errors.password =
-        "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры";
-      loginPassword.value.addEventListener("input", (event) => {
-        if (!validatePassword(loginPassword.value.value)) {
-          errors.password =
-            "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры";
-        } else {
-          errors.password = "";
-        }
-      });
+    if (checkPassword() === false) {
+      loginPassword.value.addEventListener("input", checkPassword);
     } else {
       errors.password = "";
     }
   });
 });
 
-// // рабочая версия:
-// npm install qs
-// import qs from 'qs';
-// const handleSubmit = async () => {
-//   // если поля пусты или невалидны
-//   if (loginPassword.value.value === "" || loginEmail.value.value === "") {
-//     errors.emptyFields = "Заполните, пожалуйста, все поля";
-//   } else {
-//     errors.emptyFields = "";
-//   }
-//   if (errors.email !== "" || errors.password !== "" || errors.emptyFields) {
-//     return;
-//   }
-//   const userData = {
-//     username: form.email,
-//     password: form.password,
-//   };
-
-//   try {
-//     console.log(userData);
-//     const response = await axios.post(
-//       'http://localhost:9999/login',
-//       qs.stringify(userData),
-//       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-//     );
-//     console.log(response.data);
-//   } catch (error) {
-//     console.error("Error login", error);
-//   }
-// };
-
-const handleSubmit = async () => {
-  // если поля пусты или невалидны
+const checkForm = () => {
+  // заполнены ли все поля
   if (loginPassword.value.value === "" || loginEmail.value.value === "") {
     errors.emptyFields = "Заполните, пожалуйста, все поля";
+    return false;
   } else {
     errors.emptyFields = "";
   }
+  // если еще висят ошибки
   if (errors.email !== "" || errors.password !== "" || errors.emptyFields) {
+    return false;
+  }
+
+  if (checkEmail() === false || checkPassword() === false) {
+    return false;
+  }
+
+  return true;
+};
+
+const handleSubmit = async () => {
+  if (!checkForm()) {
     return;
   }
   const userData = {
@@ -104,10 +92,12 @@ const handleSubmit = async () => {
     password: form.password,
   };
 
+  const params = new URLSearchParams(userData);
+
   try {
-    console.log(userData);
-    const response = await axios.post("http://localhost:9999/login", userData);
-    console.log(response.data);
+    const response = await axios.post("/api/login", params, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    });
   } catch (error) {
     console.error("Error login", error);
   }

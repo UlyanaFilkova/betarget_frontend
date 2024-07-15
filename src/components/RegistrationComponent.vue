@@ -4,6 +4,7 @@ import { reactive, ref, onMounted, computed } from "vue";
 import router from "@/router";
 import { RouterLink } from "vue-router";
 import axios from "axios";
+import qs from "qs";
 
 const form = reactive({
   email: "",
@@ -104,13 +105,25 @@ const handleSubmit = async () => {
     username: form.username,
     email: form.email,
     password: form.password,
+    is_active: true,
+    is_superuser: false,
+    is_verified: false,
+    telegram: null,
+    whatsapp: null,
+    linkedin: null,
+    github: null,
+    phone_number: null,
+    profile_picture: null,
   };
 
   try {
     console.log(userData);
-    const response = await axios.post("/register", userData);
+    const response = await axios.post("/api/register", userData, {
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log(response.data);
   } catch (error) {
-    console.error("Error login", error);
+    console.error("Error register", error);
   }
 };
 </script>
