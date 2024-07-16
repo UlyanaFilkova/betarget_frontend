@@ -7,6 +7,7 @@ import { useToast } from "vue-toastification";
 import Vacancy from "@/models/vacancy.js";
 
 const route = useRoute();
+const vacancies = reactive([]);
 
 const fetchVacancies = async () => {
   try {
@@ -25,8 +26,7 @@ const fetchVacancies = async () => {
 onMounted(async () => {
   try {
     const vacanciesData = await fetchVacancies();
-    const vacancies = vacanciesData.map((data) => new Vacancy(data));
-    console.log(vacancies);
+    vacanciesData.forEach((data) => vacancies.push(new Vacancy(data)));
   } catch (error) {
     console.error(error);
   }
@@ -36,7 +36,16 @@ onMounted(async () => {
 <template>
   <section class="vacancies">
     <div class="vacancies__header">Вакансии</div>
-    <div class="vacancies__list"></div>
+    <div class="vacancies__list">
+      <a
+        v-for="vacancy in vacancies"
+        :key="vacancy.id"
+        class="vacancies__vacancy"
+      >
+        <div class="vacancies__title">{{ vacancy.jobTitle }}</div>
+        <div class="vacancies__subtitle">{{ vacancy.company }}</div>
+      </a>
+    </div>
     <a href="" class="vacancies__new-vacancy">
       <p>Новая вакансия</p>
       <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
