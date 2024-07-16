@@ -7,8 +7,12 @@ body {
   overflow-y: hidden;
 }
 
-.body__margin-top {
-  height: 20px;
+#app {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .wrapper {
