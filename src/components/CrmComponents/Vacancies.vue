@@ -1,13 +1,16 @@
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, ref, provide, onMounted } from "vue";
+
 import router from "@/router";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import Vacancy from "@/models/vacancy.js";
+// import bus from '@/eventBus';
 
 const route = useRoute();
 const vacancies = reactive([]);
+const currentActiveVacancy = ref(null);
 
 const fetchVacancies = async () => {
   try {
@@ -21,6 +24,18 @@ const fetchVacancies = async () => {
   } catch (error) {
     throw new Error("Error fetching vacancies");
   }
+};
+
+const setActiveVacancy = (event, vacancyId) => {
+  if (currentActiveVacancy) {
+    currentActiveVacancy.classList.remove("vacancies__vacancy_active");
+  }
+  const targetElement = event.currentTarget;
+  targetElement.classList.add("vacancies__vacancy_active");
+  currentActiveVacancy = targetElement;
+  // bus.emit('activeVacancyChanged', currentActiveVacancy);
+  // displayResumeList(vacancyId);
+  console.log(vacancyId);
 };
 
 onMounted(async () => {
@@ -41,6 +56,7 @@ onMounted(async () => {
         v-for="vacancy in vacancies"
         :key="vacancy.id"
         class="vacancies__vacancy"
+        @click.prevent="setActiveVacancy($event, vacancy.id)"
       >
         <div class="vacancies__title">{{ vacancy.jobTitle }}</div>
         <div class="vacancies__subtitle">{{ vacancy.company }}</div>
