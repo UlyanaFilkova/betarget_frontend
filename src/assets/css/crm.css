@@ -357,7 +357,6 @@ body {
   }
 }
 .resume-display {
-  display: none;
   grid-column-start: 1;
   grid-column-end: 2;
   grid-row-start: 1;
@@ -504,7 +503,6 @@ body {
   height: -moz-fit-content;
   height: fit-content;
   overflow-x: hidden;
-  display: none;
 }
 
 .resume__info-container {
@@ -689,7 +687,7 @@ body {
 }
 
 .resume__not-chosen {
-  display: block;
+  display: none;
   position: absolute;
   top: 50%;
   left: 50%;
