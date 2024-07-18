@@ -14,11 +14,7 @@ const store = createStore({
       commit("updateActiveVacancy", activeVacancy);
     },
   },
-  getters: {
-    getMessage(state) {
-      return state.message;
-    },
-  },
+  getters: {},
 });
 
 export default store;

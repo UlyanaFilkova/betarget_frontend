@@ -30,17 +30,14 @@ const fetchVacancies = async () => {
 };
 
 const setActiveVacancy = (event, vacancyId) => {
+  console.log(typeof vacancyId);
   if (currentActiveVacancy.value !== null) {
     currentActiveVacancy.classList.remove("vacancies__vacancy_active");
   }
   const targetElement = event.currentTarget;
   targetElement.classList.add("vacancies__vacancy_active");
   currentActiveVacancy = targetElement;
-  store.dispatch("updateActiveVacancy", vacancyId);
-  // eventBus.$emit("activeVacancyChanged", currentActiveVacancy);
-  // bus.emit('activeVacancyChanged', currentActiveVacancy);
-  // displayResumeList(vacancyId);
-  console.log(vacancyId);
+  store.dispatch("updateActiveVacancy", Number(vacancyId));
 };
 
 onMounted(async () => {

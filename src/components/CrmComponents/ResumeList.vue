@@ -1,49 +1,48 @@
 <script setup>
-import { reactive, ref, inject, onMounted, watch, computed } from "vue";
+import { reactive, ref, inject, onMounted, watch, computed, unref } from "vue";
 import { useStore } from "vuex";
 import Resume from "@/models/resume.js";
 import axios from "axios";
-// import bus from "@/eventBus";
 
 const resumes = reactive([]);
 const store = useStore();
-let activeVacancy = computed(() => store.state.activeVacancy);
-watch(activeVacancy, (newActiveVacancy, oldActiveVacancy) => {
-  console.log(`Active vacancy updated: ${newActiveVacancy}`);
+let activeVacancyId = computed(() => Number(store.state.activeVacancy));
+
+watch(activeVacancyId, (newActiveVacancyId) => {
+  console.log(`Active vacancy updated: ${unref(newActiveVacancyId)}`);
+  fetchAllResumes(unref(newActiveVacancyId));
 });
 
-// bus.on("activeVacancyChanged", async (currentActiveVacancy) => {
-//   try {
-//     const resumesData = await fetchResumes(currentActiveVacancy);
-//     resumesData.forEach((data) => resumes.push(new Resume(data)));
-//     console.log(resumes);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// });
+const fetchAllResumes = async (vacancyId) => {
+  try {
+    const resumesData = await fetchResumes(vacancyId);
+    resumesData.forEach((data) => resumes.push(new Resume(data)));
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const fetchResumes = async (
   vacancyId = undefined,
   resumeStatus = undefined
 ) => {
   try {
-    let url = "/api/v1/resume";
-    if (vacancyId != undefined || vacancyId != null) {
-      url += `?vacancy_id=${vacancyId}`;
+    const url = new URL("/server/api/v1/resume", window.location.origin);
+    if (vacancyId !== undefined) {
+      url.searchParams.set("vacancy_id", vacancyId);
     }
     if (resumeStatus !== undefined) {
-      url += `&resume_status=${resumeStatus}`;
+      url.searchParams.set("resume_status", resumeStatus);
     }
-    const response = await axios.get(url, {
+    const response = await fetch(url, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      withCredentials: true,
+      credentials: "include",
     });
-
-    resumes.splice(0);
-    response.data.forEach((resume) => resumes.push(resume));
-    return response.data;
+    const data = response.json();
+    return data;
   } catch (error) {
     throw new Error("Error fetching resumes");
   }
