@@ -17,7 +17,6 @@ let currentActiveVacancy = ref(null);
 //   }
 // });
 
-
 const fetchResumes = async (
   vacancyId = undefined,
   resumeStatus = undefined

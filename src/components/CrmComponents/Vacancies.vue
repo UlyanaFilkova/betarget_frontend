@@ -7,10 +7,11 @@ import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import Vacancy from "@/models/vacancy.js";
 // import bus from '@/eventBus';
+// import { eventBus } from "@/main";
 
 const route = useRoute();
 const vacancies = reactive([]);
-const currentActiveVacancy = ref(null);
+let currentActiveVacancy = ref(null);
 
 const fetchVacancies = async () => {
   try {
@@ -27,12 +28,13 @@ const fetchVacancies = async () => {
 };
 
 const setActiveVacancy = (event, vacancyId) => {
-  if (currentActiveVacancy) {
+  if (currentActiveVacancy.value !== null) {
     currentActiveVacancy.classList.remove("vacancies__vacancy_active");
   }
   const targetElement = event.currentTarget;
   targetElement.classList.add("vacancies__vacancy_active");
   currentActiveVacancy = targetElement;
+  // eventBus.$emit("activeVacancyChanged", currentActiveVacancy);
   // bus.emit('activeVacancyChanged', currentActiveVacancy);
   // displayResumeList(vacancyId);
   console.log(vacancyId);

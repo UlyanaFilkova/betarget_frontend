@@ -98,7 +98,7 @@ const handleSubmit = async () => {
     const response = await axios.post("/server/login", params, {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
-    console.log('Login su')
+    console.log("Login success");
   } catch (error) {
     console.error("Error login", error);
   }
