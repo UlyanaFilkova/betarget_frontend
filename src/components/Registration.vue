@@ -5,6 +5,7 @@ import router from "@/router";
 import { RouterLink } from "vue-router";
 import { fetchAuthRegister, fetchAuthLogin, fetchAuthGoogle } from "@/api/auth/fetcher.js"
 import { fetchUserExists } from "@/api/user/fetcher";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 
 const authLink = ref("");
 
@@ -41,7 +42,7 @@ const validatePassword = (password) => {
 
 const checkUsername = async() => {
   if (await fetchUserExists({username: loginUsername.value.value})) {
-    errors.username = "Пользователь с таким именем уже существует";
+    errors.username = $t("registration.username_exists");
     return false;
   } else {
     errors.username = "";
@@ -51,10 +52,10 @@ const checkUsername = async() => {
 
 const checkEmail = async() => {
   if (loginEmail.value.validity.typeMismatch) {
-    errors.email = "Введите корректный email";
+    errors.email =  $t("registration.enter_valid_email");
     return false;
   } else if (await fetchUserExists({email: loginEmail.value.value})) {
-    errors.email = "Пользователь с такой почтой уже существует";
+    errors.email = $t("registration.email_exists");
     return false;
   } 
   else {
@@ -65,8 +66,7 @@ const checkEmail = async() => {
 
 const checkPassword = () => {
   if (loginPassword.value != null && !validatePassword(loginPassword.value.value)) {
-    errors.password =
-      "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры";
+    errors.password = $t("registration.password_constrains");
     return false;
   } else {
     errors.password = "";
@@ -76,7 +76,7 @@ const checkPassword = () => {
 
 const checkRepeatPassword = () => {
   if (loginRepeatPassword.value != null && loginRepeatPassword.value.value !== loginPassword.value.value) {
-    errors.repeatPassword = "Пароли не совпадают";
+    errors.repeatPassword = $t("registration.passwords_dont_match");
     return false;
   } else {
     errors.repeatPassword = "";
@@ -126,7 +126,7 @@ const checkForm = () => {
     loginPassword.value.value === "" ||
     loginEmail.value.value === ""
   ) {
-    errors.emptyFields = "Заполните, пожалуйста, все поля";
+    errors.emptyFields = $t("registration.fill_all_fields");
     return false;
   } else {
     errors.emptyFields = "";
@@ -198,7 +198,7 @@ const handleSubmit = async () => {
           id="login__username"
           name="login__username"
           v-model="form.username"
-          placeholder="Имя пользователя"
+          :placeholder="$t('registration.username')"
           autocomplete="username"
           ref="loginUsername"
           required
@@ -214,7 +214,7 @@ const handleSubmit = async () => {
           id="login__email"
           name="login__email"
           v-model="form.email"
-          placeholder="Электронная почта"
+          :placeholder="$t('registration.email')"
           autocomplete="email"
           ref="loginEmail"
           required
@@ -230,7 +230,7 @@ const handleSubmit = async () => {
           id="login__password"
           name="login__password"
           v-model="form.password"
-          placeholder="Пароль"
+          :placeholder="$t('registration.password')"
           autocomplete="new-password"
           ref="loginPassword"
           required
@@ -246,7 +246,7 @@ const handleSubmit = async () => {
           id="login__repeat_password"
           name="login__repeat_password"
           v-model="form.repeatPassword"
-          placeholder="Повторите пароль"
+          :placeholder="$t('registration.confirm_password')"
           autocomplete="new-password"
           ref="loginRepeatPassword"
           required
@@ -256,14 +256,14 @@ const handleSubmit = async () => {
           class="login__error"
           >{{ errors.repeatPassword }}</span
         >
-        <button class="login__button" type="submit">Регистрация</button>
+        <button class="login__button" type="submit">{{ $t("registration.register") }}</button>
       </form>
       <div class="login__links">
-        <RouterLink to="/login" class="login__link"
-          >Уже есть аккаунт? Войти</RouterLink
+        <RouterLink :to="Tr.i18nRoute({ name: 'login' })" class="login__link">{{ $t("registration.already_have_account") }}</RouterLink
         >
       </div>
-      <a :href="authLink">Зайти с помощью Google</a>
+      <a :href="authLink">{{ $t("registration.sign_in_with_google") }}</a>
+      <LanguageSwitcher />
     </div>
   </section>
 </template>

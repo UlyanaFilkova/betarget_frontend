@@ -11,3 +11,13 @@ export const deleteUser = async() => {
 export const getUser = async() => {
     return JSON.parse(localStorage.getItem("user"));
 }
+
+
+export const saveLocale = (locale) => {
+    localStorage.setItem("user-locale", locale);
+}
+
+
+export const getLocale = () => { 
+    return localStorage.getItem("user-locale");
+}

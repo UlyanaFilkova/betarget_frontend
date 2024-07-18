@@ -1,9 +1,11 @@
 <script setup>
 import "@/assets/css/login.css";
 import { reactive, ref, onMounted } from "vue";
-import router from "@/router";
 import { RouterLink } from "vue-router";
+import router from "@/router";
 import { fetchAuthLogin, fetchAuthGoogle } from "@/api/auth/fetcher.js";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
+import Tr from "@/i18n/translation"
 
 const authLink = ref("");
 
@@ -35,7 +37,7 @@ const validatePassword = (password) => {
 
 const checkEmail = () => {
   if (loginEmail.value.validity.typeMismatch) {
-    errors.email = "Введите корректный email";
+    errors.email = t("login.enter_correct_email");
     return false;
   } else {
     errors.email = "";
@@ -46,7 +48,7 @@ const checkEmail = () => {
 const checkPassword = () => {
   if (loginPassword.value != null && !validatePassword(loginPassword.value.value)) {
     errors.password =
-      "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры";
+      t("login.password_constrains");
     return false;
   } else {
     errors.password = "";
@@ -75,7 +77,7 @@ onMounted(() => {
 const checkForm = () => {
   // заполнены ли все поля
   if (loginPassword.value.value === "" || loginEmail.value.value === "") {
-    errors.emptyFields = "Заполните, пожалуйста, все поля";
+    errors.emptyFields = t("login.fill_all_fields");
     return false;
   } else {
     errors.emptyFields = "";
@@ -103,7 +105,7 @@ const handleSubmit = async () => {
   if(await fetchAuthLogin(userData)) {
     router.push({ name: "crm" });
   } else {
-    errors.invalidLogin = "Неверное имя пользователя или пароль";
+    errors.invalidLogin = t("login.wrong_name_or_password");
   }
 };
 </script>
@@ -129,7 +131,7 @@ const handleSubmit = async () => {
           id="login__email"
           name="login__email"
           v-model="form.email"
-          placeholder="Электронная почта"
+          :placeholder="$t('login.email')"
           autocomplete="email"
           ref="loginEmail"
           required
@@ -145,7 +147,7 @@ const handleSubmit = async () => {
           id="login__password"
           name="login__password"
           v-model="form.password"
-          placeholder="Пароль"
+          :placeholder="$t('login.password')"
           autocomplete="current-password"
           ref="loginPassword"
           required
@@ -155,15 +157,16 @@ const handleSubmit = async () => {
           class="login__error"
           >{{ errors.password }}</span
         >
-        <button class="login__button" type="submit">Вход</button>
+        <button class="login__button" type="submit">{{ $t("login.sign_in") }}</button>
       </form>
       <div class="login__links">
-        <RouterLink to="" class="login__link">Забыли пароль? </RouterLink>
-        <RouterLink to="/registration" class="login__link"
-          >Создать аккаунт</RouterLink
+        <RouterLink :to="Tr.i18nRoute({ name: '' })" class="login__link">{{ $t("login.forgot_password") }}</RouterLink>
+        <RouterLink :to="Tr.i18nRoute({ name: 'registration' })" class="login__link"
+          >{{ $t("login.create_account") }}</RouterLink
         >
       </div>
-      <a :href="authLink">Зайти с помощью Google</a>
+      <a :href="authLink">{{ $t("login.sign_in_with_google") }}</a>
     </div>
+    <LanguageSwitcher />
   </section>
 </template>
