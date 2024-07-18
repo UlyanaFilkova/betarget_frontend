@@ -1,9 +1,19 @@
 <script setup>
 import "@/assets/css/login.css";
-import { reactive, ref, onMounted, computed } from "vue";
-import router from "@/router";
+import { reactive, ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
-import axios from "axios";
+import router from "@/router";
+import { fetchAuthLogin, fetchAuthGoogle } from "@/api/auth/fetcher.js";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
+import Tr from "@/i18n/translation"
+
+const authLink = ref("");
+
+const getAuthLink = async () => {
+  const url = await fetchAuthGoogle();
+  authLink.value = url;
+}
+getAuthLink();
 
 const form = reactive({
   email: "",
@@ -17,6 +27,7 @@ const errors = reactive({
   email: "",
   password: "",
   emptyFields: "",
+  invalidLogin: "",
 });
 
 const validatePassword = (password) => {
@@ -26,7 +37,7 @@ const validatePassword = (password) => {
 
 const checkEmail = () => {
   if (loginEmail.value.validity.typeMismatch) {
-    errors.email = "Введите корректный email";
+    errors.email = t("login.enter_correct_email");
     return false;
   } else {
     errors.email = "";
@@ -35,9 +46,9 @@ const checkEmail = () => {
 };
 
 const checkPassword = () => {
-  if (!validatePassword(loginPassword.value.value)) {
+  if (loginPassword.value != null && !validatePassword(loginPassword.value.value)) {
     errors.password =
-      "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры";
+      t("login.password_constrains");
     return false;
   } else {
     errors.password = "";
@@ -66,7 +77,7 @@ onMounted(() => {
 const checkForm = () => {
   // заполнены ли все поля
   if (loginPassword.value.value === "" || loginEmail.value.value === "") {
-    errors.emptyFields = "Заполните, пожалуйста, все поля";
+    errors.emptyFields = t("login.fill_all_fields");
     return false;
   } else {
     errors.emptyFields = "";
@@ -90,17 +101,11 @@ const handleSubmit = async () => {
   const userData = {
     username: form.email,
     password: form.password,
-  };
-
-  const params = new URLSearchParams(userData);
-
-  try {
-    const response = await axios.post("/server/login", params, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
-    console.log("Login success");
-  } catch (error) {
-    console.error("Error login", error);
+  }
+  if(await fetchAuthLogin(userData)) {
+    router.push({ name: "crm" });
+  } else {
+    errors.invalidLogin = t("login.wrong_name_or_password");
   }
 };
 </script>
@@ -115,13 +120,18 @@ const handleSubmit = async () => {
           class="login__error"
           >{{ errors.emptyFields }}</span
         >
+        <span
+          :style="{ visibility: errors.invalidLogin ? 'visible' : 'hidden' }"
+          class="login__error"
+          >{{ errors.invalidLogin }}</span
+        >
         <input
           class="login__input"
           type="email"
           id="login__email"
           name="login__email"
           v-model="form.email"
-          placeholder="Электронная почта"
+          :placeholder="$t('login.email')"
           autocomplete="email"
           ref="loginEmail"
           required
@@ -137,7 +147,7 @@ const handleSubmit = async () => {
           id="login__password"
           name="login__password"
           v-model="form.password"
-          placeholder="Пароль"
+          :placeholder="$t('login.password')"
           autocomplete="current-password"
           ref="loginPassword"
           required
@@ -147,14 +157,16 @@ const handleSubmit = async () => {
           class="login__error"
           >{{ errors.password }}</span
         >
-        <button class="login__button" type="submit">Вход</button>
+        <button class="login__button" type="submit">{{ $t("login.sign_in") }}</button>
       </form>
       <div class="login__links">
-        <RouterLink to="" class="login__link">Забыли пароль? </RouterLink>
-        <RouterLink to="/registration" class="login__link"
-          >Создать аккаунт</RouterLink
+        <RouterLink :to="Tr.i18nRoute({ name: '' })" class="login__link">{{ $t("login.forgot_password") }}</RouterLink>
+        <RouterLink :to="Tr.i18nRoute({ name: 'registration' })" class="login__link"
+          >{{ $t("login.create_account") }}</RouterLink
         >
       </div>
+      <a :href="authLink">{{ $t("login.sign_in_with_google") }}</a>
     </div>
+    <LanguageSwitcher />
   </section>
 </template>

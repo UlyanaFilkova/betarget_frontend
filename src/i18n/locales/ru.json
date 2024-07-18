@@ -1,0 +1,33 @@
+{
+    "locale": {
+        "en": "English",
+        "ru": "Русский"
+    },
+    "login": {
+        "enter_correct_email": "Введите корректный email",
+        "forgot_password": "Забыли пароль?",
+        "create_account": "Создать аккаунт",
+        "sign_in_with_google": "Зайти с помощью Google",
+        "password_constrains": "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры",
+        "fill_all_fields": "Заполните все поля",
+        "wrong_name_or_password": "Неверное имя или пароль",
+        "email": "Электронная почта",
+        "password": "Пароль",
+        "sign_in": "Вход"
+    },
+    "registration": {
+        "username_exists": "Пользователь с таким именем уже существует",
+        "enter_valid_email": "Введите корректный email",
+        "email_exists": "Пользователь с такой почтой уже существует",
+        "password_constrains": "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры",
+        "passwords_dont_match": "Пароли не совпадают",
+        "fill_all_fields": "Заполните все поля",
+        "username": "Имя пользователя",
+        "email": "Электронная почта",
+        "password": "Пароль",
+        "confirm_password": "Повторите пароль",
+        "register": "Регистрация",
+        "already_have_account": "Уже есть аккаунт? Войти",
+        "sign_in_with_google": "Зайти с помощью Google"
+    }
+}

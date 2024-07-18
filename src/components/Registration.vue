@@ -1,10 +1,19 @@
 <script setup>
 import "@/assets/css/login.css";
-import { reactive, ref, onMounted, computed } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import router from "@/router";
 import { RouterLink } from "vue-router";
-import axios from "axios";
-import qs from "qs";
+import { fetchAuthRegister, fetchAuthLogin, fetchAuthGoogle } from "@/api/auth/fetcher.js"
+import { fetchUserExists } from "@/api/user/fetcher";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
+
+const authLink = ref("");
+
+const getAuthLink = async () => {
+  const url = await fetchAuthGoogle();
+  authLink.value = url;
+}
+getAuthLink();
 
 const form = reactive({
   email: "",
@@ -31,20 +40,33 @@ const validatePassword = (password) => {
   return passwordRegex.test(password);
 };
 
-const checkEmail = () => {
-  if (loginEmail.value.validity.typeMismatch) {
-    errors.email = "Введите корректный email";
+const checkUsername = async() => {
+  if (await fetchUserExists({username: loginUsername.value.value})) {
+    errors.username = $t("registration.username_exists");
     return false;
   } else {
+    errors.username = "";
+    return true;
+  }
+};
+
+const checkEmail = async() => {
+  if (loginEmail.value.validity.typeMismatch) {
+    errors.email =  $t("registration.enter_valid_email");
+    return false;
+  } else if (await fetchUserExists({email: loginEmail.value.value})) {
+    errors.email = $t("registration.email_exists");
+    return false;
+  } 
+  else {
     errors.email = "";
     return true;
   }
 };
 
 const checkPassword = () => {
-  if (!validatePassword(loginPassword.value.value)) {
-    errors.password =
-      "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры";
+  if (loginPassword.value != null && !validatePassword(loginPassword.value.value)) {
+    errors.password = $t("registration.password_constrains");
     return false;
   } else {
     errors.password = "";
@@ -53,8 +75,8 @@ const checkPassword = () => {
 };
 
 const checkRepeatPassword = () => {
-  if (loginRepeatPassword.value.value !== loginPassword.value.value) {
-    errors.repeatPassword = "Пароли не совпадают";
+  if (loginRepeatPassword.value != null && loginRepeatPassword.value.value !== loginPassword.value.value) {
+    errors.repeatPassword = $t("registration.passwords_dont_match");
     return false;
   } else {
     errors.repeatPassword = "";
@@ -62,7 +84,15 @@ const checkRepeatPassword = () => {
   }
 };
 
-onMounted(() => {
+onMounted(async() => {
+  loginUsername.value.addEventListener("focusout", (event) => {
+    if (checkUsername() === false) {
+      loginUsername.value.addEventListener("input", checkUsername);
+    } else {
+      errors.username = "";
+    }
+  });
+
   loginEmail.value.addEventListener("focusout", (event) => {
     if (checkEmail() === false) {
       loginEmail.value.addEventListener("input", checkEmail);
@@ -96,7 +126,7 @@ const checkForm = () => {
     loginPassword.value.value === "" ||
     loginEmail.value.value === ""
   ) {
-    errors.emptyFields = "Заполните, пожалуйста, все поля";
+    errors.emptyFields = $t("registration.fill_all_fields");
     return false;
   } else {
     errors.emptyFields = "";
@@ -113,6 +143,7 @@ const checkForm = () => {
   }
 
   if (
+    checkUsername() === false ||
     checkEmail() === false ||
     checkPassword() === false ||
     checkRepeatPassword() === false
@@ -123,6 +154,15 @@ const checkForm = () => {
   return true;
 };
 
+
+const clearForm = () => {
+  form.email = "";
+  form.username = "";
+  form.password = "";
+  form.repeatPassword = "";
+};
+
+
 const handleSubmit = async () => {
   if (!checkForm()) {
     return;
@@ -131,25 +171,13 @@ const handleSubmit = async () => {
     username: form.username,
     email: form.email,
     password: form.password,
-    is_active: true,
-    is_superuser: false,
-    is_verified: false,
-    telegram: null,
-    whatsapp: null,
-    linkedin: null,
-    github: null,
-    phone_number: null,
-    profile_picture: null,
-  };
-
-  try {
-    console.log(userData);
-    const response = await axios.post("/server/register", userData, {
-      headers: { "Content-Type": "application/json" },
-    });
-    console.log(response.data);
-  } catch (error) {
-    console.error("Error register", error);
+  }
+  const user = await fetchAuthRegister(userData);
+  if (user) {
+    if (await fetchAuthLogin({ username: userData.email, password: userData.password })) {
+      clearForm();
+      router.push({ name: "crm" });
+    }
   }
 };
 </script>
@@ -170,7 +198,7 @@ const handleSubmit = async () => {
           id="login__username"
           name="login__username"
           v-model="form.username"
-          placeholder="Имя пользователя"
+          :placeholder="$t('registration.username')"
           autocomplete="username"
           ref="loginUsername"
           required
@@ -186,7 +214,7 @@ const handleSubmit = async () => {
           id="login__email"
           name="login__email"
           v-model="form.email"
-          placeholder="Электронная почта"
+          :placeholder="$t('registration.email')"
           autocomplete="email"
           ref="loginEmail"
           required
@@ -202,7 +230,7 @@ const handleSubmit = async () => {
           id="login__password"
           name="login__password"
           v-model="form.password"
-          placeholder="Пароль"
+          :placeholder="$t('registration.password')"
           autocomplete="new-password"
           ref="loginPassword"
           required
@@ -218,7 +246,7 @@ const handleSubmit = async () => {
           id="login__repeat_password"
           name="login__repeat_password"
           v-model="form.repeatPassword"
-          placeholder="Повторите пароль"
+          :placeholder="$t('registration.confirm_password')"
           autocomplete="new-password"
           ref="loginRepeatPassword"
           required
@@ -228,13 +256,14 @@ const handleSubmit = async () => {
           class="login__error"
           >{{ errors.repeatPassword }}</span
         >
-        <button class="login__button" type="submit">Регистрация</button>
+        <button class="login__button" type="submit">{{ $t("registration.register") }}</button>
       </form>
       <div class="login__links">
-        <RouterLink to="/login" class="login__link"
-          >Уже есть аккаунт? Войти</RouterLink
+        <RouterLink :to="Tr.i18nRoute({ name: 'login' })" class="login__link">{{ $t("registration.already_have_account") }}</RouterLink
         >
       </div>
+      <a :href="authLink">{{ $t("registration.sign_in_with_google") }}</a>
+      <LanguageSwitcher />
     </div>
   </section>
 </template>

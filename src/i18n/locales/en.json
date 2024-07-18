@@ -1,0 +1,33 @@
+{
+    "locale": {
+        "en": "English",
+        "ru": "Русский"
+    },
+    "login": {
+        "enter_correct_email": "Enter correct email",
+        "forgot_password": "Forgot password?",
+        "create_account": "Create account",
+        "sign_in_with_google": "Sign in with Google",
+        "password_constrains": "Password must contain at least 8 characters and include uppercase letters and numbers",
+        "fill_all_fields": "Fill all fields",
+        "wrong_name_or_password": "Wrong name or password",
+        "email": "Email",
+        "password": "Password",
+        "sign_in": "Sign-in"
+    },
+    "registration": {
+        "username_exists": "User with this name already exists",
+        "enter_valid_email": "Enter valid email",
+        "email_exists": "User with this email already exists",
+        "password_constrains": "Password must contain at least 8 characters and include uppercase letters and numbers",
+        "passwords_dont_match": "Passwords do not match",
+        "fill_all_fields": "Fill all fields",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "confirm_password": "Confirm password",
+        "register": "Sign-up",
+        "already_have_account": "Already have an account? Sign in",
+        "sign_in_with_google": "Sign-in with Google"
+    }
+}
