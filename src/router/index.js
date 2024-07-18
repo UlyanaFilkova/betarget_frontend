@@ -3,20 +3,23 @@ import LoginView from "@/views/LoginView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
 import CrmView from "@/views/CrmView.vue";
 import { fetchUserMyData } from "@/api/user/fetcher.js";
+import { saveUser, deleteUser } from "@/service/user";
 
-const isAuthenticated = async () => {
-  const userData = await fetchUserMyData();
-  return !!userData;
+const isAuthenticated = async (userData) => {
+  return userData != null;
 };
 
 const checkViewBeforeEnter = async (to, from, next, destination) => {
-  if (await isAuthenticated()) {
+  const userData = await fetchUserMyData(false);
+  if (await isAuthenticated(userData)) {
+    saveUser(userData);
     if (destination) {
       next({ name: destination });
     } else {
       next();
     }
   } else {
+    deleteUser();
     next({ name: "login" });
   }
 };
@@ -26,7 +29,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      beforeEnter: (to, from, next) => checkViewBeforeEnter(to, from, next, "crm"),
+      redirect: "/crm",
     },
     {
       path: "/crm",

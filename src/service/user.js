@@ -3,6 +3,11 @@ export const saveUser = async(user) => {
 }
 
 
-export const deleteUser = async(user) => {
+export const deleteUser = async() => {
     localStorage.removeItem("user");
+}
+
+
+export const getUser = async() => {
+    return JSON.parse(localStorage.getItem("user"));
 }

@@ -36,7 +36,13 @@ export const fetchUserExists = async (data) => {
 }
 
 
-export const fetchUserMyData = async () => {
+/**
+ * Fetches the user's data from the server.
+ *
+ * @param {boolean} [showError=true] - Whether to show error in console.
+ * @return {Promise<Object>} The user's data, or undefined if an error occurred.
+ */
+export const fetchUserMyData = async (showError = true) => {
     try {
         const response = await axios.get("/server/api/v1/user/my_data", {
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -44,6 +50,8 @@ export const fetchUserMyData = async () => {
         });
         return response.data;
     } catch (error) {
-        console.error("Error to fetch user data", error);
+        if (showError) {
+            console.error("Error to fetch user data", error);
+        }
     }
 }
