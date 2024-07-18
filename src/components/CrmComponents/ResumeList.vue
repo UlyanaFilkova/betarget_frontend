@@ -1,63 +1,78 @@
 <script setup>
-import { reactive, ref, inject, onMounted, watch } from "vue";
+import {
+  reactive,
+  ref,
+  inject,
+  onMounted,
+  watch,
+  computed,
+  unref,
+  toRaw,
+} from "vue";
+import { useStore } from "vuex";
 import Resume from "@/models/resume.js";
 import axios from "axios";
-// import bus from "@/eventBus";
 
 const resumes = reactive([]);
-let currentActiveVacancy = ref(null);
+const store = useStore();
+let activeVacancyId = computed(() => Number(store.state.activeVacancy));
+let activeResume = ref(null);
 
-// bus.on("activeVacancyChanged", async (currentActiveVacancy) => {
-//   try {
-//     const resumesData = await fetchResumes(currentActiveVacancy);
-//     resumesData.forEach((data) => resumes.push(new Resume(data)));
-//     console.log(resumes);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// });
+watch(activeVacancyId, (newActiveVacancyId) => {
+  resumes.splice(0);
+  fetchAllResumes(unref(newActiveVacancyId));
+});
+
+const fetchAllResumes = async (vacancyId) => {
+  try {
+    const resumesData = await fetchResumes(vacancyId);
+    resumesData.forEach((data) => resumes.push(new Resume(data)));
+    store.dispatch("updateResumes", toRaw(resumes));
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const fetchResumes = async (
   vacancyId = undefined,
   resumeStatus = undefined
 ) => {
   try {
-    let url = "/api/v1/resume";
-    if (vacancyId != undefined || vacancyId != null) {
-      url += `?vacancy_id=${vacancyId}`;
+    const url = new URL("/server/api/v1/resume", window.location.origin);
+    if (vacancyId !== undefined) {
+      url.searchParams.set("vacancy_id", vacancyId);
     }
     if (resumeStatus !== undefined) {
-      url += `&resume_status=${resumeStatus}`;
+      url.searchParams.set("resume_status", resumeStatus);
     }
-    const response = await axios.get(url, {
+    const response = await fetch(url, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      withCredentials: true,
+      credentials: "include",
     });
-
-    resumes.splice(0);
-    response.data.forEach((resume) => resumes.push(resume));
-    return response.data;
+    const data = response.json();
+    return data;
   } catch (error) {
-    throw new Error("Error fetching resumes");
+    throw new Error("Error fetching vacancies");
   }
 };
 
-// onMounted(async () => {
-//   try {
-
-//     const resumesData = await fetchResumes(currentActiveVacancy);
-//     resumesData.forEach((data) => resumes.push(new Resume(data)));
-//   } catch (error) {
-//     console.error(error);
-//   }
-// });
-
 function handleResumeClick(event, resumeId) {
-  // Add your logic here to handle the resume click event
   console.log(`Resume clicked: ${resumeId}`);
 }
+
+const setActiveResume = (event, resumeId) => {
+  if (activeResume.value !== null) {
+    activeResume.classList.remove("resume-list__resume_active");
+  }
+  const targetElement = event.currentTarget;
+  targetElement.classList.add("resume-list__resume_active");
+  activeResume = targetElement;
+  store.dispatch("updateActiveResume", Number(resumeId));
+  console.log(resumeId);
+};
 </script>
 
 <template>
@@ -66,7 +81,7 @@ function handleResumeClick(event, resumeId) {
       v-for="resume in resumes"
       :key="resume.id"
       class="resume-list__resume"
-      @click.prevent="handleResumeClick($event, resume.id)"
+      @click.prevent="setActiveResume($event, resume.id)"
     >
       <div class="resume-list__photo-container">
         <img class="resume-list__photo" />

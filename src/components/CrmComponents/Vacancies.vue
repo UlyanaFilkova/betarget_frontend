@@ -1,17 +1,16 @@
 <script setup>
-import { reactive, ref, provide, onMounted } from "vue";
-
+import { reactive, ref, onMounted } from "vue";
 import router from "@/router";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import Vacancy from "@/models/vacancy.js";
-// import bus from '@/eventBus';
-// import { eventBus } from "@/main";
+import { useStore } from "vuex";
 
 const route = useRoute();
 const vacancies = reactive([]);
-let currentActiveVacancy = ref(null);
+let activeVacancy = ref(null);
+const store = useStore();
 
 const fetchVacancies = async () => {
   try {
@@ -28,16 +27,13 @@ const fetchVacancies = async () => {
 };
 
 const setActiveVacancy = (event, vacancyId) => {
-  if (currentActiveVacancy.value !== null) {
-    currentActiveVacancy.classList.remove("vacancies__vacancy_active");
+  if (activeVacancy.value !== null) {
+    activeVacancy.classList.remove("vacancies__vacancy_active");
   }
   const targetElement = event.currentTarget;
   targetElement.classList.add("vacancies__vacancy_active");
-  currentActiveVacancy = targetElement;
-  // eventBus.$emit("activeVacancyChanged", currentActiveVacancy);
-  // bus.emit('activeVacancyChanged', currentActiveVacancy);
-  // displayResumeList(vacancyId);
-  console.log(vacancyId);
+  activeVacancy = targetElement;
+  store.dispatch("updateActiveVacancy", Number(vacancyId));
 };
 
 onMounted(async () => {
