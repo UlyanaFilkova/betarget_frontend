@@ -1,9 +1,17 @@
 <script setup>
 import "@/assets/css/login.css";
-import { reactive, ref, onMounted, computed } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import router from "@/router";
 import { RouterLink } from "vue-router";
-import axios from "axios";
+import { fetchAuthLogin, fetchAuthGoogle } from "@/api/auth/fetcher.js";
+
+const authLink = ref("");
+
+const getAuthLink = async () => {
+  const url = await fetchAuthGoogle();
+  authLink.value = url;
+}
+getAuthLink();
 
 const form = reactive({
   email: "",
@@ -90,19 +98,12 @@ const handleSubmit = async () => {
   const userData = {
     username: form.email,
     password: form.password,
-  };
-
-  const params = new URLSearchParams(userData);
-
-  try {
-    const response = await axios.post("/server/login", params, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
-    console.log("Login success");
-  } catch (error) {
-    console.error("Error login", error);
   }
-};
+  if(await fetchAuthLogin(userData)) {
+    console.log("Login successful");
+    router.push({ name: "crm" });
+  }
+  };
 </script>
 
 <template>
@@ -155,6 +156,7 @@ const handleSubmit = async () => {
           >Создать аккаунт</RouterLink
         >
       </div>
+      <a :href="authLink">Зайти с помощью Google</a>
     </div>
   </section>
 </template>

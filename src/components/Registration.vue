@@ -1,10 +1,18 @@
 <script setup>
 import "@/assets/css/login.css";
-import { reactive, ref, onMounted, computed } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import router from "@/router";
 import { RouterLink } from "vue-router";
-import axios from "axios";
-import qs from "qs";
+import { fetchAuthRegister, fetchAuthLogin, fetchAuthGoogle } from "@/api/auth/fetcher.js"
+import { fetchUserExists } from "@/api/user/fetcher";
+
+const authLink = ref("");
+
+const getAuthLink = async () => {
+  const url = await fetchAuthGoogle();
+  authLink.value = url;
+}
+getAuthLink();
 
 const form = reactive({
   email: "",
@@ -31,11 +39,25 @@ const validatePassword = (password) => {
   return passwordRegex.test(password);
 };
 
-const checkEmail = () => {
+const checkUsername = async() => {
+  if (await fetchUserExists({username: loginUsername.value.value})) {
+    errors.username = "Пользователь с таким именем уже существует";
+    return false;
+  } else {
+    errors.username = "";
+    return true;
+  }
+};
+
+const checkEmail = async() => {
   if (loginEmail.value.validity.typeMismatch) {
     errors.email = "Введите корректный email";
     return false;
-  } else {
+  } else if (await fetchUserExists({email: loginEmail.value.value})) {
+    errors.email = "Пользователь с такой почтой уже существует";
+    return false;
+  } 
+  else {
     errors.email = "";
     return true;
   }
@@ -62,7 +84,15 @@ const checkRepeatPassword = () => {
   }
 };
 
-onMounted(() => {
+onMounted(async() => {
+  loginUsername.value.addEventListener("focusout", (event) => {
+    if (checkUsername() === false) {
+      loginUsername.value.addEventListener("input", checkUsername);
+    } else {
+      errors.username = "";
+    }
+  });
+
   loginEmail.value.addEventListener("focusout", (event) => {
     if (checkEmail() === false) {
       loginEmail.value.addEventListener("input", checkEmail);
@@ -113,6 +143,7 @@ const checkForm = () => {
   }
 
   if (
+    checkUsername() === false ||
     checkEmail() === false ||
     checkPassword() === false ||
     checkRepeatPassword() === false
@@ -123,6 +154,15 @@ const checkForm = () => {
   return true;
 };
 
+
+const clearForm = () => {
+  form.email = "";
+  form.username = "";
+  form.password = "";
+  form.repeatPassword = "";
+};
+
+
 const handleSubmit = async () => {
   if (!checkForm()) {
     return;
@@ -131,25 +171,13 @@ const handleSubmit = async () => {
     username: form.username,
     email: form.email,
     password: form.password,
-    is_active: true,
-    is_superuser: false,
-    is_verified: false,
-    telegram: null,
-    whatsapp: null,
-    linkedin: null,
-    github: null,
-    phone_number: null,
-    profile_picture: null,
-  };
-
-  try {
-    console.log(userData);
-    const response = await axios.post("/server/register", userData, {
-      headers: { "Content-Type": "application/json" },
-    });
-    console.log(response.data);
-  } catch (error) {
-    console.error("Error register", error);
+  }
+  const user = await fetchAuthRegister(userData);
+  if (user) {
+    if (await fetchAuthLogin({ username: userData.email, password: userData.password })) {
+      clearForm();
+      router.push({ name: "crm" });
+    }
   }
 };
 </script>
@@ -235,6 +263,7 @@ const handleSubmit = async () => {
           >Уже есть аккаунт? Войти</RouterLink
         >
       </div>
+      <a :href="authLink">Зайти с помощью Google</a>
     </div>
   </section>
 </template>
