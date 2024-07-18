@@ -10,6 +10,8 @@ let activeVacancyId = computed(() => Number(store.state.activeVacancy));
 
 watch(activeVacancyId, (newActiveVacancyId) => {
   console.log(`Active vacancy updated: ${unref(newActiveVacancyId)}`);
+  console.log(typeof unref(newActiveVacancyId));
+  resumes.splice(0);
   fetchAllResumes(unref(newActiveVacancyId));
 });
 
@@ -44,22 +46,11 @@ const fetchResumes = async (
     const data = response.json();
     return data;
   } catch (error) {
-    throw new Error("Error fetching resumes");
+    throw new Error("Error fetching vacancies");
   }
 };
 
-// onMounted(async () => {
-//   try {
-
-//     const resumesData = await fetchResumes(currentActiveVacancy);
-//     resumesData.forEach((data) => resumes.push(new Resume(data)));
-//   } catch (error) {
-//     console.error(error);
-//   }
-// });
-
 function handleResumeClick(event, resumeId) {
-  // Add your logic here to handle the resume click event
   console.log(`Resume clicked: ${resumeId}`);
 }
 </script>

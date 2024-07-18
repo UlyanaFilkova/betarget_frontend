@@ -1,14 +1,11 @@
 <script setup>
 import { reactive, ref, provide, onMounted } from "vue";
-
 import router from "@/router";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import Vacancy from "@/models/vacancy.js";
 import { useStore } from "vuex";
-// import bus from '@/eventBus';
-// import { eventBus } from "@/main";
 
 const route = useRoute();
 const vacancies = reactive([]);
