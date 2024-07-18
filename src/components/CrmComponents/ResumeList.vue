@@ -27,19 +27,18 @@ const fetchAllResumes = async (vacancyId) => {
   try {
     const resumesData = await fetchResumes(vacancyId);
     resumesData.forEach((data) => resumes.push(new Resume(data)));
+    // console.dir(resumesData);
+    // console.dir(resumes);
     store.dispatch("updateResumes", toRaw(resumes));
   } catch (error) {
     console.error(error);
   }
 };
 
-const fetchResumes = async (
-  vacancyId = undefined,
-  resumeStatus = undefined
-) => {
+const fetchResumes = async (vacancyId, resumeStatus = undefined) => {
   try {
     const url = new URL("/server/api/v1/resume", window.location.origin);
-    if (vacancyId !== undefined) {
+    if (vacancyId) {
       url.searchParams.set("vacancy_id", vacancyId);
     }
     if (resumeStatus !== undefined) {
@@ -53,15 +52,12 @@ const fetchResumes = async (
       credentials: "include",
     });
     const data = response.json();
+
     return data;
   } catch (error) {
-    throw new Error("Error fetching vacancies");
+    throw new Error("Error fetching resumes");
   }
 };
-
-function handleResumeClick(event, resumeId) {
-  console.log(`Resume clicked: ${resumeId}`);
-}
 
 const setActiveResume = (event, resumeId) => {
   if (activeResume.value !== null) {
@@ -70,7 +66,7 @@ const setActiveResume = (event, resumeId) => {
   const targetElement = event.currentTarget;
   targetElement.classList.add("resume-list__resume_active");
   activeResume = targetElement;
-  store.dispatch("updateActiveResume", Number(resumeId));
+  store.dispatch("updateActiveResumeId", Number(resumeId));
   console.log(resumeId);
 };
 </script>

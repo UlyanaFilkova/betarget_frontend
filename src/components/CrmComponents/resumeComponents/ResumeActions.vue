@@ -1,7 +1,81 @@
+<script setup>
+import {
+  reactive,
+  ref,
+  inject,
+  onMounted,
+  watch,
+  computed,
+  unref,
+  toRaw,
+  defineProps,
+} from "vue";
+import { useStore } from "vuex";
+import Resume from "@/models/resume.js";
+import axios from "axios";
+
+const resumeStageElement = ref(null);
+const resumeStageInput = ref(null);
+const resumeChangeStageButton = ref(null);
+const resumeCancelStageButton = ref(null);
+const resumeSaveStageButton = ref(null);
+
+const store = useStore();
+
+// const props = defineProps({
+//   resumeData: Object,
+//   required: true,
+// });
+
+// const resume = ref(new Resume(props.resumeData));
+
+// watch(props.resumeData, (newResume) => {
+//   resumeStageElement.value.textContent = translateResumeStage(
+//     newResume.resumeStage
+//   );
+//   resumeStageElement.value.dataset.stage = newResume.resumeStage;
+// });
+
+let activeResume = computed(() => toRaw(store.state.activeResume));
+
+watch(activeResume, (newResume) => {
+  console.dir(newResume);
+  resumeStageElement.value.textContent = translateResumeStage(
+    newResume.resumeStage
+  );
+  resumeStageElement.value.dataset.stage = newResume.resumeStage;
+});
+
+const translateResumeStage = (resumeStage) => {
+  switch (resumeStage) {
+    case "in_work":
+      return "В работе";
+    case "screening":
+      return "Скрининг";
+    case "interview":
+      return "Интервью";
+    case "review":
+      return "На рассмотрении";
+    case "accepted":
+      return "Принято";
+    case "rejected":
+      return "Отказ";
+    case "offer":
+      return "Оффер";
+    default:
+      return resumeStage;
+  }
+};
+</script>
+
 <template>
   <div class="resume-display__actions">
     <div class="resume-display__stage">
-      <p class="resume-display__current-stage" data-stage=""></p>
+      <p
+        ref="resumeStageElement"
+        class="resume-display__current-stage"
+        data-stage=""
+      ></p>
       <button class="resume-display__change-stage">Сменить этап</button>
       <!-- <p>Выберите этап</p> -->
       <select class="resume-display__stage-input">

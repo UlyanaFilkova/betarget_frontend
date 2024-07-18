@@ -383,7 +383,7 @@ body {
 //#endregion
 // #region ОТОБРАЖЕНИЕ РЕЗЮМЕ
 .resume-display {
-  display: none;
+  // display: none;
   grid-column-start: 1;
   grid-column-end: 2;
   grid-row-start: 1;
@@ -538,7 +538,7 @@ body {
   height: fit-content;
   overflow-x: hidden;
 
-  display: none;
+  // display: none;
 }
 
 .resume__info-container {
@@ -724,8 +724,8 @@ body {
 // #endregion
 
 .resume__not-chosen {
-  // display: none;
-  display: block;
+  display: none;
+  // display: block;
   position: absolute;
   top: 50%;
   left: 50%;
