@@ -1,5 +1,14 @@
 <script setup>
-import { reactive, ref, inject, onMounted, watch, computed, unref } from "vue";
+import {
+  reactive,
+  ref,
+  inject,
+  onMounted,
+  watch,
+  computed,
+  unref,
+  toRaw,
+} from "vue";
 import { useStore } from "vuex";
 import Resume from "@/models/resume.js";
 import axios from "axios";
@@ -7,10 +16,9 @@ import axios from "axios";
 const resumes = reactive([]);
 const store = useStore();
 let activeVacancyId = computed(() => Number(store.state.activeVacancy));
+let activeResume = ref(null);
 
 watch(activeVacancyId, (newActiveVacancyId) => {
-  console.log(`Active vacancy updated: ${unref(newActiveVacancyId)}`);
-  console.log(typeof unref(newActiveVacancyId));
   resumes.splice(0);
   fetchAllResumes(unref(newActiveVacancyId));
 });
@@ -19,6 +27,7 @@ const fetchAllResumes = async (vacancyId) => {
   try {
     const resumesData = await fetchResumes(vacancyId);
     resumesData.forEach((data) => resumes.push(new Resume(data)));
+    store.dispatch("updateResumes", toRaw(resumes));
   } catch (error) {
     console.error(error);
   }
@@ -53,6 +62,17 @@ const fetchResumes = async (
 function handleResumeClick(event, resumeId) {
   console.log(`Resume clicked: ${resumeId}`);
 }
+
+const setActiveResume = (event, resumeId) => {
+  if (activeResume.value !== null) {
+    activeResume.classList.remove("resume-list__resume_active");
+  }
+  const targetElement = event.currentTarget;
+  targetElement.classList.add("resume-list__resume_active");
+  activeResume = targetElement;
+  store.dispatch("updateActiveResume", Number(resumeId));
+  console.log(resumeId);
+};
 </script>
 
 <template>
@@ -61,7 +81,7 @@ function handleResumeClick(event, resumeId) {
       v-for="resume in resumes"
       :key="resume.id"
       class="resume-list__resume"
-      @click.prevent="handleResumeClick($event, resume.id)"
+      @click.prevent="setActiveResume($event, resume.id)"
     >
       <div class="resume-list__photo-container">
         <img class="resume-list__photo" />

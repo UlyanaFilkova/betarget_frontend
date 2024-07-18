@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, provide, onMounted } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import router from "@/router";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
@@ -9,7 +9,7 @@ import { useStore } from "vuex";
 
 const route = useRoute();
 const vacancies = reactive([]);
-let currentActiveVacancy = ref(null);
+let activeVacancy = ref(null);
 const store = useStore();
 
 const fetchVacancies = async () => {
@@ -27,13 +27,12 @@ const fetchVacancies = async () => {
 };
 
 const setActiveVacancy = (event, vacancyId) => {
-  console.log(typeof vacancyId);
-  if (currentActiveVacancy.value !== null) {
-    currentActiveVacancy.classList.remove("vacancies__vacancy_active");
+  if (activeVacancy.value !== null) {
+    activeVacancy.classList.remove("vacancies__vacancy_active");
   }
   const targetElement = event.currentTarget;
   targetElement.classList.add("vacancies__vacancy_active");
-  currentActiveVacancy = targetElement;
+  activeVacancy = targetElement;
   store.dispatch("updateActiveVacancy", Number(vacancyId));
 };
 
