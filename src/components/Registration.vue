@@ -64,7 +64,7 @@ const checkEmail = async() => {
 };
 
 const checkPassword = () => {
-  if (!validatePassword(loginPassword.value.value)) {
+  if (loginPassword.value != null && !validatePassword(loginPassword.value.value)) {
     errors.password =
       "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры";
     return false;
@@ -75,7 +75,7 @@ const checkPassword = () => {
 };
 
 const checkRepeatPassword = () => {
-  if (loginRepeatPassword.value.value !== loginPassword.value.value) {
+  if (loginRepeatPassword.value != null && loginRepeatPassword.value.value !== loginPassword.value.value) {
     errors.repeatPassword = "Пароли не совпадают";
     return false;
   } else {

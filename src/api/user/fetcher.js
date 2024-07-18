@@ -34,3 +34,16 @@ export const fetchUserExists = async (data) => {
         return false;
     }
 }
+
+
+export const fetchUserMyData = async () => {
+    try {
+        const response = await axios.get("/server/api/v1/user/my_data", {
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error to fetch user data", error);
+    }
+}

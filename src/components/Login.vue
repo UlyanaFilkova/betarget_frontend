@@ -25,6 +25,7 @@ const errors = reactive({
   email: "",
   password: "",
   emptyFields: "",
+  invalidLogin: "",
 });
 
 const validatePassword = (password) => {
@@ -43,7 +44,7 @@ const checkEmail = () => {
 };
 
 const checkPassword = () => {
-  if (!validatePassword(loginPassword.value.value)) {
+  if (loginPassword.value != null && !validatePassword(loginPassword.value.value)) {
     errors.password =
       "Пароль должен содержать не менее 8 символов и включать большие буквы и цифры";
     return false;
@@ -100,10 +101,11 @@ const handleSubmit = async () => {
     password: form.password,
   }
   if(await fetchAuthLogin(userData)) {
-    console.log("Login successful");
     router.push({ name: "crm" });
+  } else {
+    errors.invalidLogin = "Неверное имя пользователя или пароль";
   }
-  };
+};
 </script>
 
 <template>
@@ -115,6 +117,11 @@ const handleSubmit = async () => {
           :style="{ visibility: errors.emptyFields ? 'visible' : 'hidden' }"
           class="login__error"
           >{{ errors.emptyFields }}</span
+        >
+        <span
+          :style="{ visibility: errors.invalidLogin ? 'visible' : 'hidden' }"
+          class="login__error"
+          >{{ errors.invalidLogin }}</span
         >
         <input
           class="login__input"
