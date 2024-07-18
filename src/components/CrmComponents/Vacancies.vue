@@ -6,12 +6,14 @@ import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import Vacancy from "@/models/vacancy.js";
+import { useStore } from "vuex";
 // import bus from '@/eventBus';
 // import { eventBus } from "@/main";
 
 const route = useRoute();
 const vacancies = reactive([]);
 let currentActiveVacancy = ref(null);
+const store = useStore();
 
 const fetchVacancies = async () => {
   try {
@@ -34,6 +36,7 @@ const setActiveVacancy = (event, vacancyId) => {
   const targetElement = event.currentTarget;
   targetElement.classList.add("vacancies__vacancy_active");
   currentActiveVacancy = targetElement;
+  store.dispatch("updateActiveVacancy", vacancyId);
   // eventBus.$emit("activeVacancyChanged", currentActiveVacancy);
   // bus.emit('activeVacancyChanged', currentActiveVacancy);
   // displayResumeList(vacancyId);

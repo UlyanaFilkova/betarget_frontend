@@ -1,11 +1,16 @@
 <script setup>
-import { reactive, ref, inject, onMounted, watch } from "vue";
+import { reactive, ref, inject, onMounted, watch, computed } from "vue";
+import { useStore } from "vuex";
 import Resume from "@/models/resume.js";
 import axios from "axios";
 // import bus from "@/eventBus";
 
 const resumes = reactive([]);
-let currentActiveVacancy = ref(null);
+const store = useStore();
+let activeVacancy = computed(() => store.state.activeVacancy);
+watch(activeVacancy, (newActiveVacancy, oldActiveVacancy) => {
+  console.log(`Active vacancy updated: ${newActiveVacancy}`);
+});
 
 // bus.on("activeVacancyChanged", async (currentActiveVacancy) => {
 //   try {
