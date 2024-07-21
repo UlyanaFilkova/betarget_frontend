@@ -10,9 +10,9 @@ import {
   toRaw,
   defineProps,
 } from "vue";
-import { useStore } from "vuex";
+import { useActiveStore } from "@/store";
 import Resume from "@/models/resume.js";
-import axios from "axios";
+import axios from "axios"; 
 
 const resumeStageElement = ref(null);
 const resumeStageInput = ref(null);
@@ -20,7 +20,7 @@ const resumeChangeStageButton = ref(null);
 const resumeCancelStageButton = ref(null);
 const resumeSaveStageButton = ref(null);
 
-const store = useStore();
+const store = useActiveStore();
 
 // const props = defineProps({
 //   resumeData: Object,
@@ -36,15 +36,18 @@ const store = useStore();
 //   resumeStageElement.value.dataset.stage = newResume.resumeStage;
 // });
 
-let activeResume = computed(() => toRaw(store.state.activeResume));
-
-watch(activeResume, (newResume) => {
-  console.dir(newResume);
-  resumeStageElement.value.textContent = translateResumeStage(
-    newResume.resumeStage
-  );
-  resumeStageElement.value.dataset.stage = newResume.resumeStage;
-});
+// watch(
+//   () => store.state.activeResume,
+//   (newResume) => {
+//     console.dir(newResume);
+//     if (newResume) {
+//       resumeStageElement.value.textContent = translateResumeStage(
+//         newResume.resumeStage
+//       );
+//       resumeStageElement.value.dataset.stage = newResume.resumeStage;
+//     }
+//   }
+// );
 
 const translateResumeStage = (resumeStage) => {
   switch (resumeStage) {
@@ -67,6 +70,7 @@ const translateResumeStage = (resumeStage) => {
   }
 };
 </script>
+
 
 <template>
   <div class="resume-display__actions">

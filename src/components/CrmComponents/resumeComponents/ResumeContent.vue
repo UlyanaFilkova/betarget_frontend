@@ -1,46 +1,40 @@
+<script setup>
+import { computed } from "vue";
+import { useActiveStore } from "@/store";
+
+const activeStore = useActiveStore();
+
+const activeResume = computed(() => activeStore.getActiveResume);
+</script>
+
 <template>
-  <div class="resume-content">
+  <div class="resume-content" v-if="activeResume">
     <div class="resume-content__skills">
       <h3>Ключевые навыки</h3>
       <ul class="resume-content__skills-list">
-        <li>Python</li>
-        <li>Django</li>
-        <li>Flask</li>
-        <li>SQL</li>
-        <li>NoSQL</li>
-        <li>RESTful API</li>
-        <li>Тестирование кода</li>
-        <li>Оптимизация производительности</li>
+        <li v-for="skill in activeResume.skills" :key="skill">{{ skill }}</li>
       </ul>
     </div>
     <div class="resume-content__experience">
       <h3>Опыт работы</h3>
-      <p>
-        Я работал в качестве Python-разработчика в компании XYZ с 2018 года. В
-        мои обязанности входило разработка и поддержка веб-приложений на основе
-        фреймворка Django, создание и оптимизация баз данных, а также
-        взаимодействие с другими членами команды разработки для достижения
-        поставленных целей проекта.
+      <p v-for="experience in activeResume.experience" :key="experience.id">
+        {{ experience.description }}
       </p>
     </div>
     <div class="resume-content__education">
       <h3>Образование</h3>
-      <p>
-        Я получил степень бакалавра в области компьютерных наук в университете
-        ABC. Во время учебы я изучал различные аспекты программирования,
-        алгоритмы и структуры данных. Моя специализация была связана с
-        разработкой программного обеспечения, и я активно участвовал в проектах,
-        где использовался язык Python.
+      <p v-for="educationItem in activeResume.education" :key="educationItem.id">
+        {{ educationItem.description }}
       </p>
     </div>
     <div class="resume-content__about">
       <h3>О себе</h3>
       <p>
-        Python-разработчик с фокусом на веб-разработке. Имею глубокие знания
-        языка Python, фреймворков Django и Flask, а также опыт работы с базами
-        данных SQL и NoSQL. Мои навыки также включают разработку RESTful API,
-        тестирование кода и оптимизацию производительности.
+        {{ activeResume.candidate.about }}
       </p>
     </div>
+  </div>
+  <div v-else>
+    Резюме не выбрано
   </div>
 </template>

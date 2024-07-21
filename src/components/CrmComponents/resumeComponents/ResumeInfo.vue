@@ -1,11 +1,20 @@
+<script setup>
+import { computed } from "vue";
+import { useActiveStore } from "@/store";
+
+const activeStore = useActiveStore();
+
+const activeResume = computed(() => activeStore.getActiveResume);
+</script>
+
 <template>
-  <section class="resume-info">
+  <section class="resume-info" v-if="activeResume">
     <div class="resume__info-container">
       <div class="resume-info__rating-result">
         <p>Оценка:</p>
-        <span id="resume-info__rating" class="resume-info__rating-result-span"
-          >0</span
-        >
+        <span id="resume-info__rating" class="resume-info__rating-result-span">
+          {{ activeResume.rating }}
+        </span>
         / 10
       </div>
       <div class="resume-info__rating-slider">
@@ -20,7 +29,7 @@
           id="resume-info__slider"
           min="0"
           max="10"
-          value="0"
+          :value="activeResume.rating"
           class="resume-info__slider"
         />
         <button
@@ -33,50 +42,57 @@
       <div class="resume-info__photo-container">
         <div class="resume-info__photo-wrapper">
           <img
-            src="../static/img/default_profile_photo.jpg"
+            :src="activeResume.candidate.profilePicture || '../static/img/default_profile_photo.jpg'"
             class="resume-info__photo"
           />
         </div>
       </div>
-      <div class="resume-info__name">Александр Ильин</div>
-      <div class="resume-info__position">Unity Gamedev</div>
+      <div class="resume-info__name">
+        {{ activeResume.candidate.firstName }} {{ activeResume.candidate.lastName }}
+      </div>
+      <div class="resume-info__position">{{ activeResume.jobTitle }}</div>
       <div class="resume-info__list">
         <li>
           <h6>Телефон</h6>
           <div class="resume-info__list-component">
             <a
-              href="tel:+89036251683"
+              :href="'tel:' + activeResume.candidate.phoneNumber"
               type="tel"
               class="resume-info__phone"
-            ></a>
+            >
+              {{ activeResume.candidate.phoneNumber }}
+            </a>
           </div>
         </li>
         <li>
           <h6>Email</h6>
           <div class="resume-info__list-component">
             <a
-              href="mailto:sakutin@gmail.com"
+              :href="'mailto:' + activeResume.candidate.email"
               type="email"
               class="resume-info__email"
-            ></a>
-            <!-- <p class="resume-info__email"></p> -->
+            >
+              {{ activeResume.candidate.email }}
+            </a>
           </div>
         </li>
         <li>
           <h6>Город</h6>
           <div class="resume-info__list-component resume-info__city">
-            Москва
+            {{ activeResume.candidate.city }}
           </div>
         </li>
         <li>
           <h6>Желаемая ЗП</h6>
           <div class="resume-info__list-component resume-info__salary">
-            $2000
+            {{ activeResume.expectedSalary }}
           </div>
         </li>
         <li>
           <h6>Возраст</h6>
-          <div class="resume-info__list-component resume-info__age">26</div>
+          <div class="resume-info__list-component resume-info__age">
+            {{ activeResume.candidate.age }}
+          </div>
         </li>
       </div>
       <div class="resume-info__contacts"></div>

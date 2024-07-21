@@ -1,42 +1,34 @@
-import { createStore } from "vuex";
-// import { toRaw } from "vue";
+import { defineStore } from "pinia";
+import { reactive, ref } from "vue";
 
-const store = createStore({
-  state: {
-    activeVacancy: null,
+export const useActiveStore = defineStore("active", {
+  state: () => ({
+    activeVacancyId: ref(null),
     activeResume: null,
     activeResumeId: null,
-    resumes: null,
-  },
-  mutations: {
-    updateActiveVacancy(state, activeVacancy) {
-      state.activeVacancy = activeVacancy;
-    },
-    updateActiveResumeId(state, activeResumeId) {
-      state.activeResumeId = activeResumeId;
-    },
-    updateActiveResume(state, activeResume) {
-      state.activeResume = activeResume;
-    },
-    updateResumes(state, resumes) {
-      state.resumes = resumes;
-    },
-  },
+    resumes: reactive([]),
+    vacancies: reactive([]),
+  }),
   actions: {
-    updateActiveVacancy({ commit }, activeVacancy) {
-      commit("updateActiveVacancy", activeVacancy);
+    updateActiveVacancyId(activeVacancyId) {
+      this.activeVacancyId = activeVacancyId;
     },
-    updateActiveResumeId({ commit }, activeResumeId) {
-      commit("updateActiveResumeId", activeResumeId);
+    updateActiveResumeId(activeResumeId) {
+      this.activeResumeId = activeResumeId;
     },
-    updateActiveResume({ commit }, activeResume) {
-      commit("updateActiveResume", activeResume);
+    updateActiveResume(activeResume) {
+      this.activeResume = activeResume;
     },
-    updateResumes({ commit }, resumes) {
-      commit("updateResumes", resumes);
+    updateResumes(resumes) {
+      this.resumes.splice(0, this.resumes.length, ...resumes);
+    },
+    updateVacancies(vacancies) {
+      this.vacancies.splice(0, this.vacancies.length, ...vacancies);
+    }
+  },
+  getters: {
+    getActiveResume: (state) => {
+      return state.resumes.find((resume) => resume.id === state.activeResumeId);
     },
   },
-  getters: {},
 });
-
-export default store;
