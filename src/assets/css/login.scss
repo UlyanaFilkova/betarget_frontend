@@ -126,6 +126,15 @@
   }
 }
 
+.login__additional-links {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
 .login__google svg {
   width: 50px;
   height: 50px;
@@ -133,6 +142,33 @@
 
 .login__google svg:hover {
   & > circle:nth-child(2) {
-    fill: #f1f1f1;
+    fill: #f7f7f7;
   }
+}
+
+.language-switcher__select {
+  position: absolute;
+  right: 0;
+  font-size: 14px;
+  border: 1px solid $color-input-placeholder;
+  border-radius: 3px;
+  padding: 3px 5px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.language-switcher__select:hover {
+  border-color: $color-rating-font-darker;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.language-switcher__select:focus {
+  outline: none;
+}
+
+.language-switcher__select option {
+  line-height: 40px;
+  border-color: #aaa;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  outline: none;
 }
