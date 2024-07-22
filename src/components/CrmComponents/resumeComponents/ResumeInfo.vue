@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useActiveStore } from "@/store";
+import defaultProfilePhoto from "@/assets/img/default_profile_photo.jpg";
 
 const activeStore = useActiveStore();
 
@@ -42,13 +43,14 @@ const activeResume = computed(() => activeStore.getActiveResume);
       <div class="resume-info__photo-container">
         <div class="resume-info__photo-wrapper">
           <img
-            :src="activeResume.candidate.profilePicture || '../static/img/default_profile_photo.jpg'"
+            :src="activeResume.candidate.profilePicture || defaultProfilePhoto"
             class="resume-info__photo"
           />
         </div>
       </div>
       <div class="resume-info__name">
-        {{ activeResume.candidate.firstName }} {{ activeResume.candidate.lastName }}
+        {{ activeResume.candidate.firstName }}
+        {{ activeResume.candidate.lastName }}
       </div>
       <div class="resume-info__position">{{ activeResume.jobTitle }}</div>
       <div class="resume-info__list">
