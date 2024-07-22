@@ -2,11 +2,14 @@
 import "@/assets/css/login.css";
 import { reactive, ref, onMounted } from "vue";
 import router from "@/router";
+import { useI18n } from "vue-i18n";
 import { RouterLink } from "vue-router";
 import { fetchAuthRegister, fetchAuthLogin, fetchAuthGoogle } from "@/api/auth/fetcher.js"
 import { fetchUserExists } from "@/api/user/fetcher";
+import Tr from "@/i18n/translation.js";
 import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 
+const { t } = useI18n()
 const authLink = ref("");
 
 const getAuthLink = async () => {
@@ -42,7 +45,7 @@ const validatePassword = (password) => {
 
 const checkUsername = async() => {
   if (await fetchUserExists({username: loginUsername.value.value})) {
-    errors.username = $t("registration.username_exists");
+    errors.username = t("registration.username_exists");
     return false;
   } else {
     errors.username = "";
@@ -52,10 +55,10 @@ const checkUsername = async() => {
 
 const checkEmail = async() => {
   if (loginEmail.value.validity.typeMismatch) {
-    errors.email =  $t("registration.enter_valid_email");
+    errors.email =  t("registration.enter_valid_email");
     return false;
   } else if (await fetchUserExists({email: loginEmail.value.value})) {
-    errors.email = $t("registration.email_exists");
+    errors.email = t("registration.email_exists");
     return false;
   } 
   else {
@@ -66,7 +69,7 @@ const checkEmail = async() => {
 
 const checkPassword = () => {
   if (loginPassword.value != null && !validatePassword(loginPassword.value.value)) {
-    errors.password = $t("registration.password_constrains");
+    errors.password = t("registration.password_constrains");
     return false;
   } else {
     errors.password = "";
@@ -76,7 +79,7 @@ const checkPassword = () => {
 
 const checkRepeatPassword = () => {
   if (loginRepeatPassword.value != null && loginRepeatPassword.value.value !== loginPassword.value.value) {
-    errors.repeatPassword = $t("registration.passwords_dont_match");
+    errors.repeatPassword = t("registration.passwords_dont_match");
     return false;
   } else {
     errors.repeatPassword = "";
@@ -126,7 +129,7 @@ const checkForm = () => {
     loginPassword.value.value === "" ||
     loginEmail.value.value === ""
   ) {
-    errors.emptyFields = $t("registration.fill_all_fields");
+    errors.emptyFields = t("registration.fill_all_fields");
     return false;
   } else {
     errors.emptyFields = "";

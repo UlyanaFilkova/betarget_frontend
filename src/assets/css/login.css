@@ -128,4 +128,12 @@
     justify-content: space-between;
     width: 100%;
   }
+}
+.login__google svg {
+  width: 50px;
+  height: 50px;
+}
+
+.login__google svg:hover > circle:nth-child(2) {
+  fill: #f1f1f1;
 }/*# sourceMappingURL=login.css.map */
